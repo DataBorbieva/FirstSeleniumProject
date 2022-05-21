@@ -34,5 +34,7 @@ public class TestCase05 {
         Thread.sleep(3000);
         System.out.println("Checked box validation "+(signupCheck.isSelected()?"PASSED":"FAILED")); //Checked box validation FAILED
         driver.quit();
+        WebElement textMessage = driver.findElement(By.xpath("//label[@data-aid='CONTACT_FORM_EMAIL_OPT_IN']/p"));
+        System.out.println(textMessage.getText().equals("Sign up for our email list for updates, promotions, and more.") ? "Text PASSED" : "Text FAILED");
     }
 }
