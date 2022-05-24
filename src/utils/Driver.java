@@ -26,6 +26,11 @@ public class Driver {
             //waiting only that web element to be existed
             driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
         }
+        /*
+        Why do we need this IMPLICIT WAIT?
+        -This implicit wait applies to each line that locates web elements
+        -findElement() or findElements() 60 times -> NoSuchElementException
+         */
         return driver;
     }
 
@@ -37,7 +42,9 @@ public class Driver {
             e.printStackTrace();
         }
         if (driver != null) {
-            driver.manage().deleteAllCookies();
+            driver.manage().deleteAllCookies(); // if we dont delete the cookies , browser can keep our info, and sometimes
+                                                // it can break the flow, that is why we need to make sure and delete cookies
+                                                // to start with fresh and clean browser
             driver.quit();
             driver = null; //this line is SUPER IMPORTANT
         }

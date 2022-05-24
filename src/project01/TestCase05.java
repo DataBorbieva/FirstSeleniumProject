@@ -1,6 +1,7 @@
 package project01;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import utils.Driver;
@@ -19,22 +20,37 @@ public class TestCase05 {
     user
          */
         WebDriver driver = Driver.getDriver();
+
         driver.get("https://comfyelite.com/");
-        driver.findElement(By.xpath("(//a[@data-ux='NavLink'])[2]")).click();
-        ValidationUtilities.validateURL(driver, "https://comfyelite.com/contact-us");
 
-        WebElement signUpBox = driver.findElement(By.xpath("(//div[@data-ux='Element'])[2]"));
-//        WebElement signUpBox = driver.findElement(By.xpath("//label[@data-aid='CONTACT_FORM_EMAIL_OPT_IN']"));
+        WebElement contactUsLink = driver.findElement(By.xpath("//a[text()='Contact Us']"));
+        contactUsLink.click();
 
-
-        WebElement signupCheck = driver.findElement(By.xpath("//input[@data-ux='InputCheckbox']"));
+        if(driver.getTitle().equals("Contact Us | COMFY ELITE")) System.out.println("User is on Contact Us page");
+        else throw new NotFoundException("User is not routed to Contact Us page");
 
 
-        signUpBox.click();
-        Thread.sleep(3000);
-        System.out.println("Checked box validation "+(signupCheck.isSelected()?"PASSED":"FAILED")); //Checked box validation FAILED
-        driver.quit();
-        WebElement textMessage = driver.findElement(By.xpath("//label[@data-aid='CONTACT_FORM_EMAIL_OPT_IN']/p"));
-        System.out.println(textMessage.getText().equals("Sign up for our email list for updates, promotions, and more.") ? "Text PASSED" : "Text FAILED");
+        WebElement checkBoxInput = driver.findElement(By.xpath("//label[@data-ux='InputCheckbox']/input"));
+        WebElement checkBoxDiv = driver.findElement(By.xpath("//label[@data-ux='InputCheckbox']/div"));
+
+        //Default - deselected
+        if(!checkBoxInput.isSelected()) System.out.println("Check box is not selected by default");
+        else throw new NotFoundException("Check box is selected by default");
+
+        Thread.sleep(2000);
+        checkBoxDiv.click();
+
+        //Make sure it is selected
+        if(checkBoxInput.isSelected()) System.out.println("Check box is selected after the click");
+        else throw new NotFoundException("Check box is not selected after the click");
+
+        Thread.sleep(2000);
+        checkBoxDiv.click();
+
+        //Make sure it is deselected again
+        if(!checkBoxInput.isSelected()) System.out.println("Check box is deselected after the second click");
+        else throw new NotFoundException("Check box is not getting deselected after the second click");
+
+        Driver.quitDriver();
     }
 }

@@ -1,15 +1,16 @@
 package project01;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import utils.Driver;
 import utils.ValidationUtilities;
 
 public class TestCase01 {
     public static void main(String[] args) {
         /*
-
-        Test Case 1: Validate ComfyElite Contact Us Page heading section
+    Test Case 1: Validate ComfyElite Contact Us Page heading section
         Given user navigates to “https://comfyelite.com/”
 When user clicks on “CONTACT US” link in the header
 Then user should be navigated to “CONTACT US” page
@@ -18,18 +19,27 @@ And user should be able to see heading2 as “High quality comfy pillows and acc
 travel, office and home.”
          */
 
+
         WebDriver driver = Driver.getDriver();
+
         driver.get("https://comfyelite.com/");
-        //(//a[@data-ux='NavLink'])[2]
-        driver.findElement(By.xpath("(//a[@data-ux='NavLink'])[2]")).click();
-        ValidationUtilities.validateURL(driver, "https://comfyelite.com/contact-us");
-        ValidationUtilities.validateIsDisplayedById(driver, "n-48560"); //validated ComfyElite logo
 
-        if(driver.findElement(By.id("dynamic-tagline-48605")).getText().equals("High quality comfy pillows and accessories for travel, office and home."))
-        System.out.println("Header tag is validated");
-        else System.out.println("Header tag is failed");
+        WebElement contactUsLink = driver.findElement(By.xpath("//a[text()='Contact Us']"));
+        contactUsLink.click();
 
-        driver.quit();
+        if(driver.getCurrentUrl().contains("contact-us")) System.out.println("User is on Contact Us page");
+        else throw new NotFoundException("User is not routed to Contact Us page");
 
+        WebElement logo = driver.findElement(By.id("n-48560"));
+        WebElement heading2 = driver.findElement(By.id("dynamic-tagline-48605"));
+
+        if(logo.isDisplayed()) System.out.println("Logo validation is passed");
+        else throw new NotFoundException("Logo is not displayed");
+
+        if(heading2.getText().equals("High quality comfy pillows and accessories for travel, office and home."))
+            System.out.println("Heading2 validation is passed");
+        else throw new NotFoundException("Heading2 is not displayed as expected");
+
+        Driver.quitDriver();
     }
 }

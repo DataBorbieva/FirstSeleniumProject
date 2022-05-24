@@ -1,6 +1,7 @@
 package project01;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import utils.Driver;
@@ -24,24 +25,30 @@ And user should be able to see “Instagram” icon and hyperlink reference for 
 
          */
         WebDriver driver = Driver.getDriver();
+
         driver.get("https://comfyelite.com/");
-        driver.findElement(By.xpath("(//a[@data-ux='NavLink'])[2]")).click();
-        ValidationUtilities.validateURL(driver, "https://comfyelite.com/contact-us"); // we are on the contact-us page
-        if (driver.findElement(By.xpath("//div[@id='f5a174cf-e723-46a4-ae9e-b0e81ae77913']//span")).getText().equals("Connect With Us"))
-            System.out.println("Sub Heading is validated");
-        else System.out.println("Sub Heading is failed");
 
+        WebElement contactUsLink = driver.findElement(By.xpath("//a[text()='Contact Us']"));
+        contactUsLink.click();
 
-        List<WebElement> elements = driver.findElements(By.xpath("//a[contains(@data-aid,'SOCIAL_')]"));
-        String[] expectedLinks = {"https://www.facebook.com/103179127717601", "https://www.instagram.com/comfyelite"};
+        if(driver.getTitle().contains("Contact Us")) System.out.println("User is on Contact Us page");
+        else throw new NotFoundException("User is not routed to Contact Us page");
 
-        for (int i = 0; i < elements.size(); i++) {
-            System.out.println(elements.get(i).isDisplayed() ? "Social media logos are DISPLAYED" : "Its failed");
-            System.out.println(elements.get(i).getAttribute("href").equals(expectedLinks[i]) ? "Social media links are are as expected" : "Its failed");
-        }
+        WebElement heading1 = driver.findElement(By.tagName("h1"));
+        WebElement facebookIcon = driver.findElement(By.xpath("//div[@data-aid='SOCIAL_SOCIAL_LINKS']/a[1]"));
+        WebElement instagramIcon = driver.findElement(By.xpath("//div[@data-aid='SOCIAL_SOCIAL_LINKS']/a[2]"));
 
-        driver.quit();
+        if(heading1.getText().equals("Connect With Us")) System.out.println("Heading1 validation is passed");
+        else throw new NotFoundException("Heading1 is not displayed as expected");
 
+        if(facebookIcon.isDisplayed() && facebookIcon.getAttribute("href").equals("https://www.facebook.com/103179127717601"))
+            System.out.println("Facebook icon validation is passed");
+        else throw new NotFoundException("Facebook icon not displayed as expected");
 
+        if(instagramIcon.isDisplayed() && instagramIcon.getAttribute("href").equals("https://www.instagram.com/comfyelite"))
+            System.out.println("Instagram icon validation is passed");
+        else throw new NotFoundException("Instagram icon not displayed as expected");
+
+        Driver.quitDriver();
     }
 }

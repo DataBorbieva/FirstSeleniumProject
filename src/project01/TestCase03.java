@@ -1,6 +1,7 @@
 package project01;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import utils.Driver;
@@ -18,23 +19,27 @@ public class TestCase03 {
         And user should be able to see heading4 as "SEND US A MESSAGE"
          */
         WebDriver driver = Driver.getDriver();
+
         driver.get("https://comfyelite.com/");
-        driver.findElement(By.xpath("(//a[@data-ux='NavLink'])[2]")).click();
-        ValidationUtilities.validateURL(driver, "https://comfyelite.com/contact-us");
 
-        WebElement sendUsMessage = driver.findElement(By.xpath("//h4[@data-aid='CONTACT_FORM_TITLE_REND']"));
-        WebElement contactUs = driver.findElement(By.xpath("//h2[@data-aid='CONTACT_SECTION_TITLE_REND']//span[1]"));
+        WebElement contactUsLink = driver.findElement(By.xpath("//a[text()='Contact Us']"));
+        contactUsLink.click();
 
-        System.out.println(contactUs.isDisplayed() ? "Heading2 is displayed" : "Heading2 is NOT displayed");
-        System.out.println(sendUsMessage.isDisplayed() ? "Heading4 is displayed" : "Heading4 is NOT displayed");
+        if(driver.getTitle().equals("Contact Us | COMFY ELITE")) System.out.println("User is on Contact Us page");
+        else throw new NotFoundException("User is not routed to Contact Us page");
 
-        System.out.println(contactUs.getText().equals("Contact Us") ? "Heading2 text is validated" : "Heading2 is NOT validated");
-        System.out.println(sendUsMessage.getText().equals("SEND US A MESSAGE") ? "Heading4 is validated" : "Heading4 is NOT validated");
+        WebElement heading2 = driver.findElement(By.cssSelector("h2[data-aid='CONTACT_SECTION_TITLE_REND']>span"));
+        WebElement heading4 = driver.findElement(By.cssSelector("h4[data-aid='CONTACT_FORM_TITLE_REND']"));
 
-        driver.quit();
+        if(heading2.getText().equals("Contact Us")) System.out.println("Heading2 validation is passed");
+        else throw new NotFoundException("Heading2 is not displayed as expected");
 
-    }}
+        if(heading4.getText().equals("SEND US A MESSAGE")) System.out.println("Heading4 validation is passed");
+        else throw new NotFoundException("Heading4 is not displayed as expected");
 
+        Driver.quitDriver();
+    }
+}
 
 
 
